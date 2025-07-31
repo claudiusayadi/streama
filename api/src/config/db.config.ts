@@ -1,0 +1,12 @@
+import { registerAs } from '@nestjs/config';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { AppConfig } from './env.config';
+
+export default registerAs('db', () => {
+  const config = {
+    type: 'postgres',
+    url: AppConfig.DB_URL,
+    autoLoadEntities: true,
+  } as const satisfies TypeOrmModuleOptions;
+  return config;
+});
