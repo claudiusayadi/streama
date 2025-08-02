@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MoviesService } from './movies.service';
+import { TmdbModule } from 'src/domains/tmdb/tmdb.module';
 import { MoviesController } from './movies.controller';
 
 @Module({
+  imports: [TmdbModule],
+  providers: [],
   controllers: [MoviesController],
-  providers: [MoviesService],
 })
 export class MoviesModule {}
