@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TvService } from './tv.service';
+import { TmdbModule } from '../tmdb/tmdb.module';
 import { TvController } from './tv.controller';
+import { TvService } from './tv.service';
 
 @Module({
-  controllers: [TvController],
+  imports: [TmdbModule],
   providers: [TvService],
+  controllers: [TvController],
 })
 export class TvModule {}
