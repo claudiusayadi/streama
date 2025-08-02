@@ -1,0 +1,35 @@
+name: streama
+services:
+  streama-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '$PORT:$PORT'
+    environment:
+      NODE_ENV: $NODE_ENV
+      DB_URL: $DB_URL
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: $JWT_SECRET
+      JWT_EXPIRES_IN: $JWT_TTL
+      TMDB_API_URL: $TMDB_API_URL
+      TMDB_API_KEY: $TMDB_API_KEY
+      THROTTLE_TTL: $THROTTLER_TTL
+      THROTTLE_LIMIT: $THROTTLER_LIMIT
+    networks:
+      - pg
+      - redis
+    volumes:
+      - ./upload:/usr/src/api/upload
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:$PORT/health']
+      interval: 60s
+      timeout: 30s
+      retries: 3
+networks:
+  pg:
+    external: true
+  redis:
+    external: true

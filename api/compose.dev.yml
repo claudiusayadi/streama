@@ -1,0 +1,29 @@
+name: streama
+services:
+  streama-api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - '$PORT:$PORT'
+    environment:
+      NODE_ENV: $NODE_ENV
+      DB_URL: $DB_URL
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: $JWT_SECRET
+      JWT_EXPIRES_IN: $JWT_TTL
+      TMDB_API_URL: $TMDB_API_URL
+      TMDB_API_KEY: $TMDB_API_KEY
+      THROTTLE_TTL: $THROTTLER_TTL
+      THROTTLE_LIMIT: $THROTTLER_LIMIT
+    networks:
+      - db
+    volumes:
+      - .:/usr/src/api
+      - node_modules:/usr/src/api/node_modules
+
+networks:
+  db:
+    external: true
