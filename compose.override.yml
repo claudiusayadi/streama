@@ -21,8 +21,6 @@ services:
     volumes:
       - ./app:/usr/src/app
       - /usr/src/app/node_modules # prevents host node_modules from overwriting container's
-    ports:
-      - ${APP_PORT}:${APP_PORT}
     environment:
       NODE_ENV: development
     networks:

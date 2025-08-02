@@ -6,8 +6,11 @@ dotenvExpand.expand(dotenv.config());
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test', 'staging']),
-  PORT: z.coerce.number().min(1, 'PORT must be a positive number!'),
+  API_PORT: z.coerce.number().min(1, 'API_PORT must be a positive number!'),
+  APP_PORT: z.coerce.number().min(1, 'APP_PORT must be a positive number!'),
   API_PREFIX: z.string().min(1, 'API_PREFIX is required!'),
+  API_URL: z.string().min(1, 'API_URL is required!'),
+  APP_URL: z.string().min(1, 'APP_URL is required!'),
 
   DB_URL: z.string().min(1, 'DB_URL is required!'),
 
@@ -19,19 +22,22 @@ export const envSchema = z.object({
   THROTTLER_LIMIT: z.coerce.number().min(1, 'THROTTLER_LIMIT is required!'),
 
   HTTP_TIMEOUT: z.coerce.number().min(1, 'HTTP_TIMEOUT is required!'),
-  HTTP_MAX_REDIRECT: z.coerce.number().min(1, 'HTTP_MAX_REDIRECT is required!'),
+  HTTP_MAX_REDIRECTS: z.coerce
+    .number()
+    .min(1, 'HTTP_MAX_REDIRECT is required!'),
 
   TMDB_API_KEY: z.string().min(1, 'TMDB_API_KEY is required!'),
   TMDB_API_URL: z.string().min(1, 'TMDB_API_URL is required!'),
   TMDB_IMAGE_URL: z.string().min(1, 'TMDB_IMAGE_URL is required!'),
   TRACK_TV_API_KEY: z.string().min(1, 'TRACK_TV_API_KEY is required!'),
 
+  EMAIL_FROM: z.string().optional(),
+  EMAIL_SENDER: z.string().optional(),
+
   EMAIL_HOST: z.string().optional(),
   EMAIL_PORT: z.coerce.number().optional(),
   EMAIL_USERNAME: z.string().optional(),
   EMAIL_PASSWORD: z.string().optional(),
-  EMAIL_FROM: z.string().optional(),
-  EMAIL_SENDER: z.string().optional(),
 
   SMTP_SERVER: z.string().optional(),
   SMTP_PORT: z.coerce.number().optional(),

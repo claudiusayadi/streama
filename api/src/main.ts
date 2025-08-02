@@ -11,7 +11,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger(bootstrap.name);
   const prefix = AppConfig.API_PREFIX;
-  const port = AppConfig.PORT;
+  const port = AppConfig.API_PORT;
   const env = AppConfig.NODE_ENV;
   const p = pkg as PackageJson;
   const title: string = p?.name?.replace(/-/g, ' ').toUpperCase() ?? '';
