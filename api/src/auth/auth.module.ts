@@ -1,24 +1,28 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import {
+  ClassSerializerInterceptor,
+  Module,
+  ValidationPipe,
+} from '@nestjs/common';
+import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { JwtStrategy } from 'src/auth/strategies/jwt.strategy';
-import { LocalStrategy } from 'src/auth/strategies/local.strategy';
-import jwtConfig from 'src/config/jwt.config';
-import throttlerConfig from 'src/config/throttler.config';
-import { User } from 'src/domains/users/entities/user.entity';
+import { VALIDATION_PIPE_OPTIONS } from 'src/common/common.constant';
+import { AppConfig } from '../config/app.config';
+import jwtConfig from '../config/jwt.config';
+import throttlerConfig from '../config/throttler.config';
+import { User } from '../domains/users/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
-    ConfigModule.forFeature(jwtConfig),
     ThrottlerModule.forRootAsync(throttlerConfig.asProvider()),
   ],
   controllers: [AuthController],
@@ -26,6 +30,10 @@ import { AuthService } from './auth.service';
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    {
+      provide: AppConfig.TOKEN,
+      useValue: AppConfig,
+    },
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
@@ -37,6 +45,14 @@ import { AuthService } from './auth.service';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe(VALIDATION_PIPE_OPTIONS),
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
     },
   ],
 })
