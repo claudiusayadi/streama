@@ -55,5 +55,6 @@ import { LocalStrategy } from './strategies/local.strategy';
       useClass: ClassSerializerInterceptor,
     },
   ],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

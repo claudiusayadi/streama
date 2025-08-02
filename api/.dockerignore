@@ -125,7 +125,7 @@ README.md
 # Docker
 Dockerfile
 .dockerignore
-docker-compose*.yml
+compose*.yml
 
 # Bun
 .bun

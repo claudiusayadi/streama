@@ -26,11 +26,9 @@
     "seed": "ts-node /db/seeds/seed.ts",
     "docker:up": "docker compose up -d",
     "docker:up:dev": "docker compose -f compose.dev.yml up -d",
-    "docker:down": "docker compose down",
-    "docker:down:dev": "docker compose -f compose.dev.yml down",
-    "docker:logs": "docker compose logs -f",
-    "docker:clean": "docker compose down -v --remove-orphans && docker system prune -f",
-    "docker:clean:dev": "docker compose -f compose.dev.yml down -v --remove-orphans && docker system prune -f"
+    "docker:down": "docker compose down --remove-orphans",
+    "docker:down:dev": "docker compose -f compose.dev.yml down --remove-orphans",
+    "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
