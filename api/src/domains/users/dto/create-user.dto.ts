@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { PreferencesDto } from 'src/domains/users/dto/user-preferences.dto';
+import { PreferencesDto } from './user-preferences.dto';
 
 export class CreateUserDto {
   /**

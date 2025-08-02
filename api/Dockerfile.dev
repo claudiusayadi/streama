@@ -2,15 +2,12 @@ FROM oven/bun:alpine AS base
 
 WORKDIR /usr/src/api
 
-# Install dependencies for development
 COPY package.json bun.lock ./
 RUN bun install --frozen-lockfile
 
-# Copy source code
+ENV NODE_ENV=development
 COPY . ./
 
-# Expose port
-EXPOSE ${PORT}
+EXPOSE ${API_PORT}
 
-# Run in development mode with watch
-CMD ["bun", "run", "start:dev"]
+CMD [ "bun", "run", "start:dev" ]

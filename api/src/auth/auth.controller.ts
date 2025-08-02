@@ -28,13 +28,7 @@ export class AuthController {
 
   /**
    * Registers a new user account.
-   *
-   * @param {AuthDto} dto - The registration data transfer object containing the user's email and password.
-   * @returns The created user entity.
-   * @throws {ConflictException} If the provided email is already associated with an existing account.
-   * @remarks
-   * This endpoint is public and does not require authentication.
-   * On success, returns the newly created user.
+   * @remarks This endpoint is public and does not require authentication.
    */
   @HttpCode(HttpStatus.CREATED)
   @Public()

@@ -14,6 +14,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+ENV="$(pwd)/.env"
+
 
 # Function to check prerequisites
 check_prerequisites() {
@@ -32,7 +34,7 @@ check_prerequisites() {
 
 # Function to sync .env to GitHub secrets
 sync_secrets() {
-    if [ ! -f ".env" ]; then
+    if [ ! -f "$ENV" ]; then
         echo -e "${RED}Error: .env file not found${NC}"
         echo "Please create a .env file with your environment variables"
         exit 1
@@ -71,7 +73,7 @@ sync_secrets() {
                 echo -e "${RED}✗${NC}"
             fi
         fi
-    done < .env
+    done < "$ENV"
 
     echo
     echo -e "${GREEN}✓ Successfully synced $count secrets!${NC}"

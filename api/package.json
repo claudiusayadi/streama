@@ -1,7 +1,7 @@
 {
-  "name": "api",
-  "version": "0.0.1",
-  "description": "a focused finance tracking system created to help users monitor spending across multiple banks and financial apps. It supports both manual entry and CSV imports, with an emphasis on clarity, financial planning, and long-term goal simulation.\n- Track and categorize transactions manually or by importing CSV statements from banks and fintech platforms.\n- An intelligent budgeting engine that estimates how long it would take to hit financial goals based on salary, expenses, and savings targets.\n- Clear and interactive financial dashboards built with Chart.js, covering categories, savings, and monthly trends.\n- Developed with NestJS and React, PostgreSQL using TypeORM, containerized with Docker, and deployed using GitHub Actions.",
+  "name": "streama-api",
+  "version": "1.0.0",
+  "description": "Streama API - A modern media streaming and management platform backend",
   "author": "Claudius A.",
   "private": true,
   "license": "MIT",
@@ -19,16 +19,11 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "premigration:generate": "bun run build",
-    "migration:generate": "bun typeorm migration:generate -d dist/config/data-source -p",
+    "migration:generate": "bun typeorm migration:generate -d dist/src/config/data-source -p",
     "premigration:run": "bun run build",
-    "migration:run": "bun typeorm migration:run -d dist/config/data-source",
-    "migration:revert": "bun typeorm migration:revert -d dist/config/data-source",
-    "seed": "ts-node /db/seeds/seed.ts",
-    "docker:up": "docker compose up -d",
-    "docker:up:dev": "docker compose -f compose.dev.yml up -d",
-    "docker:down": "docker compose down --remove-orphans",
-    "docker:down:dev": "docker compose -f compose.dev.yml down --remove-orphans",
-    "docker:logs": "docker compose logs -f"
+    "migration:run": "bun typeorm migration:run -d dist/src/config/data-source",
+    "migration:revert": "bun typeorm migration:revert -d dist/src/config/data-source",
+    "seed": "ts-node /db/seeds/seed.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",

@@ -1,10 +1,8 @@
 name: streama
 services:
-  api-dev:
-    container_name: streama-api-dev
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
+  streama-api:
+    container_name: streama:api
+    image: ghcr.io/claudiusayadi/streama:api:latest
     restart: unless-stopped
     ports:
       - '$PORT:$PORT'
@@ -19,12 +17,21 @@ services:
       TMDB_API_KEY: $TMDB_API_KEY
       THROTTLE_TTL: $THROTTLER_TTL
       THROTTLE_LIMIT: $THROTTLER_LIMIT
+      TZ: $TZ
     networks:
-      - db
+      - pg
+      - redis
     volumes:
-      - ./:/usr/src/api
-      - /usr/src/api/node_modules # prevents host node_modules from overwriting container's node_modules
+      - ./upload:/usr/src/api/upload
+    command: bun run start:prod
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:$PORT/health']
+      interval: 60s
+      timeout: 30s
+      retries: 3
 
 networks:
-  db:
+  pg:
+    external: true
+  redis:
     external: true

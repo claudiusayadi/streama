@@ -57,7 +57,7 @@ while IFS= read -r line || [ -n "$line" ]; do
             echo -e "${RED}✗ Failed to set $key${NC}"
         fi
     fi
-done < .env
+done < $ENV
 
 echo -e "${GREEN}✓ Secrets sync completed!${NC}"
 echo

@@ -31,7 +31,7 @@ export class UsersController {
    * @throws ConflictException if the email already exists
    */
   @HttpCode(HttpStatus.CREATED)
-  @Roles(UserRole.ADMIN)
+  // @Roles(UserRole.ADMIN)
   @Post()
   create(@Body() dto: CreateUserDto) {
     return this.usersService.create(dto);

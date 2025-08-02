@@ -18,19 +18,19 @@ RUN cd /tmp/prod && bun install --frozen-lockfile --production
 # Then copy all (non-ignored) project files into the image
 FROM base AS prerelease
 COPY --from=install /tmp/dev/node_modules node_modules
-COPY . .
+COPY . ./
 
 # Build the application
-ENV NODE_ENV=${NODE_ENV}
+ENV NODE_ENV=production
 RUN bun run build
 
 # Copy production dependencies and source code into final image
 FROM base AS release
 COPY --from=install /tmp/prod/node_modules node_modules
-COPY --from=prerelease /usr/src/api/dist ./dist
-COPY --from=prerelease /usr/src/api/package.json .
+COPY --from=prerelease /usr/src/api/dist ./
+COPY --from=prerelease /usr/src/api/package.json ./
 
 # Expose port
-EXPOSE ${PORT}
+EXPOSE ${API_PORT}
 
-CMD ["bun", "run", "dist/main.js"]
+CMD [ "bun", "run", "start:prod" ]

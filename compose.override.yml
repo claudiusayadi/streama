@@ -1,0 +1,31 @@
+name: streama
+services:
+  streama-api:
+    container_name: streama:api:dev
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api:/usr/src/api
+      - /usr/src/api/node_modules # prevents host node_modules from overwriting container's
+    environment:
+      NODE_ENV: development
+    networks:
+      - db
+    command: bun run start:dev
+
+  streama-app:
+    container_name: streama:app:dev
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules # prevents host node_modules from overwriting container's
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+
+networks:
+  db:
+    external: true
+
