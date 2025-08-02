@@ -1,12 +1,12 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { AppConfig } from 'src/config/app.config';
-import httpConfig from 'src/config/http.config';
+import { configProvider } from 'src/config/providers.config';
+import httpConfig from '../../config/http.config';
 import { TmdbService } from './tmdb.service';
 
 @Module({
   imports: [HttpModule.registerAsync({ useFactory: () => httpConfig })],
-  providers: [TmdbService, { provide: AppConfig.TOKEN, useValue: AppConfig }],
+  providers: [TmdbService, ...configProvider],
   exports: [TmdbService],
 })
 export class TmdbModule {}

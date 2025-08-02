@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { firstValueFrom } from 'rxjs';
-import { AppConfig } from 'src/config/app.config';
-import { PreferencesDto } from 'src/domains/users/dto/user-preferences.dto';
+import { AppConfig } from '../../config/app.config';
+import { PreferencesDto } from '../users/dto/user-preferences.dto';
 import {
   TmdbApiResponse,
   TmdbMovie,
