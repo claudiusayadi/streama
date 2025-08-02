@@ -19,7 +19,7 @@
     "docker:logs:api": "docker compose logs -f streama-api",
     "docker:pull": "docker compose pull",
     "docker:restart": "bun run docker:down && bun run docker:up",
-    "api:dev": "cd api && bun run start:dev",
+    "api:dev": "cd api && bun run start:dev --env-file=../.env",
     "api:build": "cd api && bun run build",
     "api:test": "cd api && bun run test",
     "api:lint": "cd api && bun run lint",
