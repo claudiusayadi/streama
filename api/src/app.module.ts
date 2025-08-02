@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { globalProviders } from './config/providers.config';
 import { DbModule } from './db/db.module';
 import { MoviesModule } from './domains/movies/movies.module';
 import { TmdbModule } from './domains/tmdb/tmdb.module';
@@ -20,6 +21,6 @@ import { HealthModule } from './health/health.module';
     UsersModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [...globalProviders],
 })
 export class AppModule {}
