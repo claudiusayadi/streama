@@ -1,40 +1,42 @@
 {
-	"name": "streama",
-	"version": "1.0.0",
-	"description": "Streama API - A modern media streaming and management platform",
-	"author": "Claudius A.",
-	"private": true,
-	"license": "MIT",
-	"workspaces": [
-		"api",
-		"app"
-	],
-	"scripts": {
-		"dev": "docker compose up -d",
-		"build": "bun run --filter api build && bun run --filter app build",
-		"start": "bun run docker:up",
-		"docker:up": "docker compose up -d",
-		"docker:down": "docker compose down --remove-orphans",
-		"docker:logs": "docker compose logs -f",
-		"docker:logs:api": "docker compose logs -f streama-api",
-		"docker:pull": "docker compose pull",
-		"docker:restart": "bun run docker:down && bun run docker:up",
-		"api:dev": "cd api && bun run start:dev",
-		"api:build": "cd api && bun run build",
-		"api:test": "cd api && bun run test",
-		"api:lint": "cd api && bun run lint"
-	},
-	"keywords": [
-		"media",
-		"streaming",
-		"tmdb",
-		"movies",
-		"tv-shows",
-		"nestjs",
-		"react",
-		"docker"
-	],
-	"devDependencies": {
-		"prettier": "^3.6.2"
-	}
+  "name": "streama",
+  "version": "1.0.0",
+  "description": "Streama API - A modern media streaming and management platform",
+  "author": "Claudius A.",
+  "private": true,
+  "license": "MIT",
+  "workspaces": [
+    "api",
+    "app"
+  ],
+  "scripts": {
+    "dev": "docker compose up -d",
+    "build": "bun run --filter api build && bun run --filter app build",
+    "start": "bun run docker:up",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down --remove-orphans",
+    "docker:logs": "docker compose logs -f",
+    "docker:logs:api": "docker compose logs -f streama-api",
+    "docker:pull": "docker compose pull",
+    "docker:restart": "bun run docker:down && bun run docker:up",
+    "api:dev": "cd api && bun run start:dev",
+    "api:build": "cd api && bun run build",
+    "api:test": "cd api && bun run test",
+    "api:lint": "cd api && bun run lint",
+    "app:dev": "cd app && bun run dev",
+    "app:preview": "cd app && bun run preview"
+  },
+  "keywords": [
+    "media",
+    "streaming",
+    "tmdb",
+    "movies",
+    "tv-shows",
+    "nestjs",
+    "react",
+    "docker"
+  ],
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
 }

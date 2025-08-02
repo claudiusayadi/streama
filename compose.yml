@@ -1,8 +1,8 @@
 name: streama
 services:
   streama-api:
-    container_name: streama:api
-    image: ghcr.io/claudiusayadi/streama:api:latest
+    container_name: streama-api
+    image: ghcr.io/claudiusayadi/streama-api:latest
     restart: unless-stopped
     ports:
       - '$PORT:$PORT'
@@ -23,7 +23,6 @@ services:
       - redis
     volumes:
       - ./upload:/usr/src/api/upload
-    command: bun run start:prod
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:$PORT/health']
       interval: 60s

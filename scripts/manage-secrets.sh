@@ -8,42 +8,47 @@
 
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+# Colors for output using tput
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+BLUE=$(tput setaf 4)
+NC=$(tput sgr0) # No Color
 ENV="$(pwd)/.env"
 
 
 # Function to check prerequisites
 check_prerequisites() {
     if ! command -v gh &> /dev/null; then
-        echo -e "${RED}Error: GitHub CLI is not installed${NC}"
+        printf "%sError: GitHub CLI is not installed%s\n" "$RED" "$NC"
         echo "Install it from: https://cli.github.com/"
         exit 1
     fi
 
     if ! gh auth status >/dev/null 2>&1; then
-        echo -e "${RED}Error: Not authenticated with GitHub CLI${NC}"
+        printf "%sError: Not authenticated with GitHub CLI%s\n" "$RED" "$NC"
         echo "Please run: gh auth login"
         exit 1
     fi
 }
 
-# Function to sync .env to GitHub secrets
+# Function to sync .env to GitHub secrets with cleanup
 sync_secrets() {
     if [ ! -f "$ENV" ]; then
-        echo -e "${RED}Error: .env file not found${NC}"
+        printf "%sError: .env file not found%s\n" "$RED" "$NC"
         echo "Please create a .env file with your environment variables"
         exit 1
     fi
 
-    echo -e "${YELLOW}Syncing .env variables to GitHub repository secrets...${NC}"
+    printf "%sSyncing .env variables to GitHub repository secrets...%s\n" "$YELLOW" "$NC"
     echo
 
-    local count=0
+    # Get current secrets from GitHub
+    echo "Fetching current secrets from GitHub..."
+    current_secrets=$(gh secret list --json name --jq '.[].name' 2>/dev/null || echo "")
+
+    # Get secrets that should exist from .env
+    declare -A env_secrets
     while IFS= read -r line || [ -n "$line" ]; do
         # Skip comments and empty lines
         if [[ $line =~ ^[[:space:]]*# ]] || [[ -z "${line// }" ]]; then
@@ -60,65 +65,148 @@ sync_secrets() {
 
             # Skip if value is empty
             if [ -z "$value" ]; then
-                echo -e "${YELLOW}Skipping $key (empty value)${NC}"
+                printf "%sSkipping %s (empty value)%s\n" "$YELLOW" "$key" "$NC"
                 continue
             fi
 
-            echo -n "Setting secret: ${BLUE}$key${NC} ... "
-
-            if echo "$value" | gh secret set "$key" --body - 2>/dev/null; then
-                echo -e "${GREEN}✓${NC}"
-                ((count++))
-            else
-                echo -e "${RED}✗${NC}"
-            fi
+            env_secrets["$key"]="$value"
         fi
     done < "$ENV"
 
+    # Sync secrets from .env
+    local sync_count=0
     echo
-    echo -e "${GREEN}✓ Successfully synced $count secrets!${NC}"
-    echo -e "${YELLOW}View at: https://github.com/$(gh repo view --json owner,name --jq '.owner.login + "/" + .name')/settings/secrets/actions${NC}"
+    printf "%sSyncing secrets from .env:%s\n" "$BLUE" "$NC"
+    for key in "${!env_secrets[@]}"; do
+        value="${env_secrets[$key]}"
+        printf "Setting secret: %s%s%s ... " "$BLUE" "$key" "$NC"
+
+        if echo "$value" | gh secret set "$key" --body - 2>/dev/null; then
+            printf "%s✓%s\n" "$GREEN" "$NC"
+            ((sync_count++))
+        else
+            printf "%s✗%s\n" "$RED" "$NC"
+        fi
+    done
+
+    # Check for orphaned secrets (exist in GitHub but not in .env)
+    echo
+    printf "%sChecking for orphaned secrets:%s\n" "$BLUE" "$NC"
+    declare -a orphaned_secrets
+
+    if [ -n "$current_secrets" ]; then
+        while IFS= read -r secret; do
+            if [ -n "$secret" ] && [ -z "${env_secrets[$secret]}" ]; then
+                orphaned_secrets+=("$secret")
+                printf "%sFound orphaned secret: %s%s\n" "$YELLOW" "$secret" "$NC"
+            fi
+        done <<< "$current_secrets"
+    fi
+
+    if [ ${#orphaned_secrets[@]} -gt 0 ]; then
+        echo
+        printf "%sFound %d orphaned secret(s) that exist in GitHub but not in .env:%s\n" "$YELLOW" "${#orphaned_secrets[@]}" "$NC"
+        printf '%s\n' "${orphaned_secrets[@]}"
+        echo
+        read -p "Do you want to delete these orphaned secrets? (y/N): " delete_orphaned
+
+        if [[ $delete_orphaned =~ ^[Yy]$ ]]; then
+            local delete_count=0
+            for secret in "${orphaned_secrets[@]}"; do
+                printf "Deleting orphaned secret: %s%s%s ... " "$BLUE" "$secret" "$NC"
+                if gh secret delete "$secret" 2>/dev/null; then
+                    printf "%s✓%s\n" "$GREEN" "$NC"
+                    ((delete_count++))
+                else
+                    printf "%s✗%s\n" "$RED" "$NC"
+                fi
+            done
+            printf "%s✓ Deleted %d orphaned secrets%s\n" "$GREEN" "$delete_count" "$NC"
+        fi
+    else
+        printf "%sNo orphaned secrets found%s\n" "$GREEN" "$NC"
+    fi
+
+    echo
+    printf "%s✓ Successfully synced %d secrets!%s\n" "$GREEN" "$sync_count" "$NC"
+    printf "%sView at: https://github.com/%s/settings/secrets/actions%s\n" "$YELLOW" "$(gh repo view --json owner,name --jq '.owner.login + "/" + .name')" "$NC"
 }
 
 # Function to list GitHub secrets
 list_secrets() {
-    echo -e "${YELLOW}Current GitHub repository secrets:${NC}"
+    printf "%sCurrent GitHub repository secrets:%s\n" "$YELLOW" "$NC"
     echo
     gh secret list
 }
 
-# Function to delete a secret
+# Function to delete secrets (single or batch)
 delete_secret() {
-    echo -e "${YELLOW}Current secrets:${NC}"
-    gh secret list
-    echo
-    read -p "Enter secret name to delete: " secret_name
+    local secrets_input="$1"
 
-    if [ -n "$secret_name" ]; then
-        if gh secret delete "$secret_name"; then
-            echo -e "${GREEN}✓ Successfully deleted secret: $secret_name${NC}"
-        else
-            echo -e "${RED}✗ Failed to delete secret: $secret_name${NC}"
+    if [ -n "$secrets_input" ]; then
+        # Batch delete: parse comma-separated list
+        IFS=',' read -ra SECRETS <<< "$secrets_input"
+        printf "%sBatch deleting %d secrets...%s\n" "$YELLOW" "${#SECRETS[@]}" "$NC"
+        echo
+
+        local success_count=0
+        local total_count=${#SECRETS[@]}
+
+        for secret in "${SECRETS[@]}"; do
+            # Trim whitespace
+            secret=$(echo "$secret" | xargs)
+            printf "Deleting secret: %s%s%s ... " "$BLUE" "$secret" "$NC"
+
+            if gh secret delete "$secret" 2>/dev/null; then
+                printf "%s✓%s\n" "$GREEN" "$NC"
+                ((success_count++))
+            else
+                printf "%s✗ (not found or error)%s\n" "$RED" "$NC"
+            fi
+        done
+
+        echo
+        printf "%s✓ Successfully deleted %d/%d secrets%s\n" "$GREEN" "$success_count" "$total_count" "$NC"
+    else
+        # Interactive single delete
+        printf "%sCurrent secrets:%s\n" "$YELLOW" "$NC"
+        gh secret list
+        echo
+        read -p "Enter secret name to delete: " secret_name
+
+        if [ -n "$secret_name" ]; then
+            if gh secret delete "$secret_name"; then
+                printf "%s✓ Successfully deleted secret: %s%s\n" "$GREEN" "$secret_name" "$NC"
+            else
+                printf "%s✗ Failed to delete secret: %s%s\n" "$RED" "$secret_name" "$NC"
+            fi
         fi
     fi
 }
 
 # Function to show help
 show_help() {
-    echo -e "${BLUE}GitHub Secrets Management Script${NC}"
+    printf "%sGitHub Secrets Management Script%s\n" "$BLUE" "$NC"
     echo
-    echo "Usage: $0 [COMMAND]"
+    echo "Usage: $0 [COMMAND] [OPTIONS]"
     echo
     echo "Commands:"
     echo "  sync     Sync .env variables to GitHub repository secrets"
+    echo "           Also detects and optionally removes orphaned secrets"
     echo "  list     List current GitHub repository secrets"
-    echo "  delete   Delete a specific secret"
+    echo "  delete   Delete secrets (single or batch)"
     echo "  help     Show this help message"
     echo
     echo "Examples:"
     echo "  $0 sync"
     echo "  $0 list"
-    echo "  $0 delete"
+    echo "  $0 delete                    # Interactive single delete"
+    echo "  $0 delete SECRET_NAME        # Delete single secret"
+    echo "  $0 delete SECRET1,SECRET2    # Batch delete multiple secrets"
+    echo
+    echo "Batch Delete Format:"
+    echo "  Comma-separated list: SECRET_1,SECRET_2,SECRET_3"
+    echo "  Spaces around commas are automatically trimmed"
 }
 
 # Main script logic
@@ -132,13 +220,13 @@ case "${1:-help}" in
         list_secrets
         ;;
     delete)
-        delete_secret
+        delete_secret "$2"
         ;;
     help|--help|-h)
         show_help
         ;;
     *)
-        echo -e "${RED}Error: Unknown command '$1'${NC}"
+        printf "%sError: Unknown command '%s'%s\n" "$RED" "$1" "$NC"
         echo
         show_help
         exit 1

@@ -5,14 +5,17 @@ on:
     branches: [main]
     paths:
       - 'app/**'
+      - 'Dockerfile*'
+      - 'compose*.yml'
   pull_request:
     branches: [main]
     paths:
       - 'app/**'
-
+      - 'Dockerfile*'
+      - 'compose*.yml'
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}:app
+  IMAGE_NAME: ${{ github.repository }}-app
 
 jobs:
   build-and-push:
