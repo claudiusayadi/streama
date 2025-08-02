@@ -1,4 +1,4 @@
-import { AppConfig } from './env.config';
+import { AppConfig } from './app.config';
 
 export default {
   secure: true,

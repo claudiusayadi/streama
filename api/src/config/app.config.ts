@@ -18,6 +18,14 @@ export const envSchema = z.object({
   THROTTLER_TTL: z.coerce.number().min(1, 'THROTTLER_TTL is required!'),
   THROTTLER_LIMIT: z.coerce.number().min(1, 'THROTTLER_LIMIT is required!'),
 
+  HTTP_TIMEOUT: z.coerce.number().min(1, 'HTTP_TIMEOUT is required!'),
+  HTTP_MAX_REDIRECT: z.coerce.number().min(1, 'HTTP_MAX_REDIRECT is required!'),
+
+  TMDB_API_KEY: z.string().min(1, 'TMDB_API_KEY is required!'),
+  TMDB_API_URL: z.string().min(1, 'TMDB_API_URL is required!'),
+  TMDB_IMAGE_URL: z.string().min(1, 'TMDB_IMAGE_URL is required!'),
+  TRACK_TV_API_KEY: z.string().min(1, 'TRACK_TV_API_KEY is required!'),
+
   EMAIL_HOST: z.string().optional(),
   EMAIL_PORT: z.coerce.number().optional(),
   EMAIL_USERNAME: z.string().optional(),
@@ -40,4 +48,9 @@ export const parsedEnv = (): ApiConfig => {
   return envSchema.parse(process.env);
 };
 
-export const AppConfig = parsedEnv();
+const configValues = parsedEnv();
+
+export const AppConfig = {
+  TOKEN: 'AppConfig' as const,
+  ...configValues,
+};

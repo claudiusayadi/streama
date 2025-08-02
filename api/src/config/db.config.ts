@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { AppConfig } from './env.config';
+import { AppConfig } from './app.config';
 
 export default registerAs('db', () => {
   const config = {
