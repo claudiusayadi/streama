@@ -6,13 +6,13 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ChangeEmailDto } from 'src/auth/dto/change-email.dto';
-import { ChangePasswordDto } from 'src/auth/dto/change-password';
-import { UserRole } from 'src/common/enums/user-role.enum';
-import { JwtPayload, RequestUser } from 'src/common/interfaces/user.interface';
-import { User } from 'src/domains/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { UserRole } from '../common/enums/user-role.enum';
+import { JwtPayload, RequestUser } from '../common/interfaces/user.interface';
+import { User } from '../domains/users/entities/user.entity';
 import { AuthDto } from './dto/auth.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
+import { ChangePasswordDto } from './dto/change-password';
 
 @Injectable()
 export class AuthService {
