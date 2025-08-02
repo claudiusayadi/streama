@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Post,
   Query,
 } from '@nestjs/common';
 import { AuthDto } from 'src/auth/dto/auth.dto';
@@ -15,12 +16,27 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RemoveDto } from 'src/common/dto/remove.dto';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { RequestUser } from 'src/common/interfaces/user.interface';
+import { CreateUserDto } from 'src/domains/users/dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  /**
+   * Creates a new user - only accessible by admin.
+   * @param dto The data to create the user
+   * @returns Returns the created user
+   * @throws ConflictException if the email already exists
+   */
+  @HttpCode(HttpStatus.CREATED)
+  @Roles(UserRole.ADMIN)
+  @Post()
+  create(@Body() dto: CreateUserDto) {
+    return this.usersService.create(dto);
+  }
+
   /**
    * Gets all users - only accessible by admin.
    * @returns Returns all users

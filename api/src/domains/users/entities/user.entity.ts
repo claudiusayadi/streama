@@ -2,7 +2,7 @@ import * as argon from 'argon2';
 import { Exclude } from 'class-transformer';
 import { RegistryDates } from 'src/common/entities/registry.entity';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { UserPreferencesDto } from 'src/domains/users/dto/user-preferences.dto';
+import { PreferencesDto } from 'src/domains/users/dto/user-preferences.dto';
 import {
   BeforeInsert,
   BeforeUpdate,
@@ -61,7 +61,7 @@ export class User {
   lastLoginAt?: Date;
 
   @Column({ type: 'jsonb', nullable: true })
-  public preferences?: UserPreferencesDto;
+  public preferences?: PreferencesDto;
 
   @Column(() => RegistryDates, { prefix: false })
   public registry: RegistryDates;

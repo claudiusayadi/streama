@@ -10,7 +10,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { UserRole } from 'src/common/enums/user-role.enum';
-import { UserPreferencesDto } from 'src/domains/users/dto/user-preferences.dto';
+import { PreferencesDto } from 'src/domains/users/dto/user-preferences.dto';
 
 export class CreateUserDto {
   /**
@@ -121,11 +121,11 @@ export class CreateUserDto {
   lastLoginAt?: Date;
 
   /**
-   *  User's UI preferences
-   *  @example { theme: 'dark', language: 'en' }
+   *  User's app preferences
+   *  @example { theme: 'dark', language: 'en-NG', include_adult: true }
    */
   @ValidateNested()
-  @Type(() => UserPreferencesDto)
+  @Type(() => PreferencesDto)
   @IsOptional()
-  preferences?: UserPreferencesDto;
+  preferences?: PreferencesDto;
 }

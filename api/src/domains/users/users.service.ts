@@ -10,6 +10,7 @@ import { AuthDto } from 'src/auth/dto/auth.dto';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { RequestUser } from 'src/common/interfaces/user.interface';
 import { compareIds } from 'src/common/utils/compare-ids.util';
+import { CreateUserDto } from 'src/domains/users/dto/create-user.dto';
 import { User } from 'src/domains/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,6 +20,17 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepo: Repository<User>,
   ) {}
+
+  public async create(dto: CreateUserDto) {
+    const existingUser = await this.usersRepo.findOne({
+      where: { email: dto.email },
+    });
+
+    if (existingUser) throw new ConflictException('Email already exists');
+
+    const user = this.usersRepo.create(dto);
+    return await this.usersRepo.save(user);
+  }
 
   public async findAll() {
     return await this.usersRepo.find();
