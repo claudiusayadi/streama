@@ -1,6 +1,7 @@
 name: streama
 services:
   api-dev:
+    container_name: streama-api-dev
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -21,8 +22,8 @@ services:
     networks:
       - db
     volumes:
-      - .:/usr/src/api
-      - usr/src/api/node_modules # prevents host node_modules from overwriting container's node_modules
+      - ./:/usr/src/api
+      - /usr/src/api/node_modules # prevents host node_modules from overwriting container's node_modules
 
 networks:
   db:

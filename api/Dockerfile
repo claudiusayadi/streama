@@ -1,5 +1,5 @@
-# Use Bun's official image as base
-FROM oven/bun:1 AS base
+FROM oven/bun:alpine AS base
+
 WORKDIR /usr/src/api
 
 # Install dependencies into tmp directory
@@ -21,7 +21,7 @@ COPY --from=install /tmp/dev/node_modules node_modules
 COPY . .
 
 # Build the application
-ENV NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
 RUN bun run build
 
 # Copy production dependencies and source code into final image
@@ -31,8 +31,6 @@ COPY --from=prerelease /usr/src/api/dist ./dist
 COPY --from=prerelease /usr/src/api/package.json .
 
 # Expose port
-EXPOSE 5134
+EXPOSE ${PORT}
 
-# Run the app
-USER bun
 CMD ["bun", "run", "dist/main.js"]

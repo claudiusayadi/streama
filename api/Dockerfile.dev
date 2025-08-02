@@ -1,19 +1,16 @@
-# Development Dockerfile with hot reload
-FROM oven/bun:1
+FROM oven/bun:alpine AS base
 
 WORKDIR /usr/src/api
 
-# Copy package files
+# Install dependencies for development
 COPY package.json bun.lock ./
-
-# Install all dependencies (including dev dependencies)
-RUN bun install
+RUN bun install --frozen-lockfile
 
 # Copy source code
-COPY . .
+COPY . ./
 
 # Expose port
-EXPOSE 5134
+EXPOSE ${PORT}
 
-# Run in development mode with hot reload
+# Run in development mode with watch
 CMD ["bun", "run", "start:dev"]
