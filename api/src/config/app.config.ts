@@ -24,12 +24,15 @@ export const envSchema = z.object({
   HTTP_TIMEOUT: z.coerce.number().min(1, 'HTTP_TIMEOUT is required!'),
   HTTP_MAX_REDIRECTS: z.coerce
     .number()
-    .min(1, 'HTTP_MAX_REDIRECT is required!'),
+    .min(1, 'HTTP_MAX_REDIRECTS is required!'),
 
   TMDB_API_KEY: z.string().min(1, 'TMDB_API_KEY is required!'),
   TMDB_API_URL: z.string().min(1, 'TMDB_API_URL is required!'),
   TMDB_IMAGE_URL: z.string().min(1, 'TMDB_IMAGE_URL is required!'),
-  TRACK_TV_API_KEY: z.string().min(1, 'TRACK_TV_API_KEY is required!'),
+
+  TRAKT_CLIENT_ID: z.string().min(1, 'TRAKT_CLIENT_ID is required!'),
+  TRAKT_CLIENT_SECRET: z.string().min(1, 'TRAKT_CLIENT_SECRET is required!'),
+  TRAKT_API_URL: z.string().min(1, 'TRAKT_API_URL is required!'),
 
   EMAIL_FROM: z.string().optional(),
   EMAIL_SENDER: z.string().optional(),
@@ -51,7 +54,11 @@ export const envSchema = z.object({
 export type ApiConfig = z.infer<typeof envSchema>;
 
 export const parsedEnv = (): ApiConfig => {
-  return envSchema.parse(process.env);
+  const result = envSchema.safeParse(process.env);
+  if (!result.success) {
+    throw new Error(`Environment validation failed: ${result.error.message}`);
+  }
+  return result.data;
 };
 
 const configValues = parsedEnv();

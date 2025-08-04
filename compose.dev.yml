@@ -1,7 +1,7 @@
 name: streama
 services:
   streama-api:
-    container_name: streama-api:dev
+    container_name: streama-api-dev
     build:
       context: ./api
       dockerfile: Dockerfile.dev
@@ -27,6 +27,31 @@ services:
       - /usr/src/api/node_modules # prevents host node_modules from overwriting container's
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:$API_PORT/health']
+      interval: 60s
+      timeout: 30s
+      retries: 3
+
+  streama-app:
+    container_name: streama-app-dev
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    ports:
+      - '$APP_PORT:$APP_PORT'
+    environment:
+      NODE_ENV: $NODE_ENV
+      NEXT_PUBLIC_API_URL: http://localhost:$API_PORT/api/v1
+      PORT: $APP_PORT
+      TZ: $TZ
+    depends_on:
+      - streama-api
+    volumes:
+      - ./app:/usr/src/app
+      - /usr/src/app/node_modules # prevents host node_modules from overwriting container's
+      - /usr/src/app/.next # preserve Next.js cache
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:$APP_PORT']
       interval: 60s
       timeout: 30s
       retries: 3

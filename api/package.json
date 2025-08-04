@@ -1,6 +1,6 @@
 {
-  "name": "streama-api",
-  "version": "1.0.0",
+  "name": "@streama/api",
+  "version": "0.1.0",
   "description": "Streama API - A modern media streaming and management platform backend",
   "author": "Claudius A.",
   "private": true,

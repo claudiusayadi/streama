@@ -29,6 +29,25 @@ services:
       timeout: 30s
       retries: 3
 
+  streama-app:
+    container_name: streama-app
+    image: ghcr.io/claudiusayadi/streama-app:latest
+    restart: unless-stopped
+    ports:
+      - '$APP_PORT:$APP_PORT'
+    environment:
+      NODE_ENV: $NODE_ENV
+      NEXT_PUBLIC_API_URL: $API_URL
+      PORT: $APP_PORT
+      TZ: $TZ
+    depends_on:
+      - streama-api
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:$APP_PORT']
+      interval: 60s
+      timeout: 30s
+      retries: 3
+
 networks:
   pg:
     external: true

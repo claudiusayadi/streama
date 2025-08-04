@@ -44,6 +44,21 @@ export class MoviesController {
   }
 
   /**
+   * Fetch top-rated movies from TMDB using discover endpoint
+   * @param {PreferencesDto} preferences - User's media preferences
+   * @param {string} [apiKey] - Optional API key for TMDB
+   * @example GET /movies/top-rated?page=1&language=en-US&sort_by=vote_average.desc
+   * @returns {Promise<TmdbApiResponse<TmdbMovie>>} - Paginated list of top-rated movies
+   */
+  @Get('top-rated')
+  async getTopRatedMovies(
+    @Query() preferences: PreferencesDto,
+    apiKey?: string,
+  ): Promise<TmdbApiResponse<TmdbMovie>> {
+    return await this.tmdb.getTopRatedMovies(preferences, apiKey);
+  }
+
+  /**
    * Fetch now playing movies from TMDB using discover endpoint
    * @param {PreferencesDto} preferences - User's media preferences
    * @param {string} [apiKey] - Optional API key for TMDB
@@ -71,21 +86,6 @@ export class MoviesController {
     apiKey?: string,
   ): Promise<TmdbApiResponse<TmdbMovie>> {
     return await this.tmdb.getUpcomingMovies(preferences, apiKey);
-  }
-
-  /**
-   * Fetch top-rated movies from TMDB using discover endpoint
-   * @param {PreferencesDto} preferences - User's media preferences
-   * @param {string} [apiKey] - Optional API key for TMDB
-   * @example GET /movies/top-rated?page=1&language=en-US&sort_by=vote_average.desc
-   * @returns {Promise<TmdbApiResponse<TmdbMovie>>} - Paginated list of top-rated movies
-   */
-  @Get('top-rated')
-  async getTopRatedMovies(
-    @Query() preferences: PreferencesDto,
-    apiKey?: string,
-  ): Promise<TmdbApiResponse<TmdbMovie>> {
-    return await this.tmdb.getTopRatedMovies(preferences, apiKey);
   }
 
   /**
