@@ -14,7 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const pathname = usePathname();
 
   const getActiveTab = (): 'movies' | 'tv' => {
-    if (pathname.startsWith('/tv')) {
+    if (pathname?.startsWith('/tv')) {
       return 'tv';
     }
     return 'movies';
@@ -28,10 +28,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className="w-64 bg-white shadow-sm border-r border-gray-200">
+      <div className="w-64 bg-white border-r border-gray-200 shadow-sm">
         <div className="p-6">
-          <div className="flex items-center space-x-2 mb-8">
-            <Star className="h-8 w-8 text-blue-600" />
+          <div className="flex items-center mb-8 space-x-2">
+            <Star className="w-8 h-8 text-blue-600" />
             <h1 className="text-2xl font-bold text-gray-900">Streama</h1>
           </div>
 
@@ -45,7 +45,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   : 'text-gray-600 hover:bg-gray-50',
               )}
             >
-              <Film className="h-5 w-5" />
+              <Film className="w-5 h-5" />
               <span className="font-medium">Movies</span>
             </button>
 
@@ -58,7 +58,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   : 'text-gray-600 hover:bg-gray-50',
               )}
             >
-              <Tv className="h-5 w-5" />
+              <Tv className="w-5 h-5" />
               <span className="font-medium">TV Shows</span>
             </button>
           </nav>
@@ -67,7 +67,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
-        <main className="h-full overflow-y-auto p-8">{children}</main>
+        <main className="h-full p-8 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

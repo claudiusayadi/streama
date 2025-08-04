@@ -31,16 +31,9 @@ COPY --from=install /tmp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/.next/standalone ./
 COPY --from=prerelease /usr/src/app/.next/static ./.next/static
 COPY --from=prerelease /usr/src/app/public ./public
-COPY --from=prerelease /usr/src/app/package.json ./
 
-# Create a non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 bun
-USER bun
 
-# Expose port
 EXPOSE ${APP_PORT}
+ENV HOSTNAME="0.0.0.0"
 
-ENV PORT=${APP_PORT}
-
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]

@@ -8,7 +8,8 @@ import {
 import { ArrowLeft, Calendar, Star, Tv } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Layout } from '../../../components/Layout';
+import { useEffect, useState } from 'react';
+import { Layout } from '../../../components/layout';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
 import { tvApi } from '../../../lib/api';
@@ -22,9 +23,16 @@ const queryClient = new QueryClient({
   },
 });
 
-function TVDetailContent({ params }: { params: { id: string } }) {
+function TVDetailContent({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const showId = params.id;
+  const [showId, setShowId] = useState<string>('');
+
+  // Handle async params
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setShowId(resolvedParams.id);
+    });
+  }, [params]);
 
   const {
     data: show,
@@ -33,6 +41,7 @@ function TVDetailContent({ params }: { params: { id: string } }) {
   } = useQuery({
     queryKey: ['tv', showId],
     queryFn: () => tvApi.getById(showId),
+    enabled: !!showId, // Only run query when showId is available
   });
 
   const handleBack = () => {
@@ -177,7 +186,11 @@ function TVDetailContent({ params }: { params: { id: string } }) {
   );
 }
 
-export default function TVDetailPage({ params }: { params: { id: string } }) {
+export default function TVDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   return (
     <QueryClientProvider client={queryClient}>
       <Layout>

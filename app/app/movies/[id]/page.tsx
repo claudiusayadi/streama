@@ -8,7 +8,8 @@ import {
 import { ArrowLeft, Calendar, Clock, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Layout } from '../../../components/Layout';
+import { useEffect, useState } from 'react';
+import { Layout } from '../../../components/layout';
 import { Button } from '../../../components/ui/button';
 import { Card, CardContent } from '../../../components/ui/card';
 import { moviesApi } from '../../../lib/api';
@@ -22,9 +23,16 @@ const queryClient = new QueryClient({
   },
 });
 
-function MovieDetailContent({ params }: { params: { id: string } }) {
+function MovieDetailContent({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const movieId = params.id;
+  const [movieId, setMovieId] = useState<string>('');
+
+  // Handle async params
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setMovieId(resolvedParams.id);
+    });
+  }, [params]);
 
   const {
     data: movie,
@@ -33,6 +41,7 @@ function MovieDetailContent({ params }: { params: { id: string } }) {
   } = useQuery({
     queryKey: ['movie', movieId],
     queryFn: () => moviesApi.getById(movieId),
+    enabled: !!movieId, // Only run query when movieId is available
   });
 
   const handleBack = () => {
@@ -188,7 +197,7 @@ function MovieDetailContent({ params }: { params: { id: string } }) {
 export default function MovieDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   return (
     <QueryClientProvider client={queryClient}>

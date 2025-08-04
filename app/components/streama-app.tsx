@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { useAppStore } from '../store/app-store';
-import { Layout } from './Layout';
+import { Layout } from './layout';
 import { MoviesPageComponent } from './movie';
 import { TVPageComponent } from './tv';
 
@@ -17,15 +17,7 @@ const queryClient = new QueryClient({
 });
 
 export const StreamaApp: React.FC = () => {
-  const { appState, setMoviesPage, setTVPage, getActiveTab } = useAppStore();
-
-  const handleTabChange = (tab: 'movies' | 'tv') => {
-    if (tab === 'movies') {
-      setMoviesPage();
-    } else {
-      setTVPage();
-    }
-  };
+  const { appState } = useAppStore();
 
   const renderContent = () => {
     switch (appState.page) {
@@ -46,9 +38,7 @@ export const StreamaApp: React.FC = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Layout activeTab={getActiveTab()} onTabChange={handleTabChange}>
-        {renderContent()}
-      </Layout>
+      <Layout>{renderContent()}</Layout>
     </QueryClientProvider>
   );
 };

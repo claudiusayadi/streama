@@ -1,7 +1,7 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Layout } from '../../components/Layout';
+import { Layout } from '../../components/layout';
 import { TVPageComponent } from '../../components/tv';
 
 const queryClient = new QueryClient({
