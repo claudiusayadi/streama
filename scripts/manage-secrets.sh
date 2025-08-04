@@ -64,11 +64,23 @@ function add_secrets() {
 
   title "Adding secrets from $ENV_FILE to $REPO"
 
-  while IFS='=' read -r key value; do
-    [[ -z "$key" || "$key" =~ ^# ]] && continue
-    log "Adding $key"
-    gh secret set "$key" --repo "$REPO" --body "$value"
-  done < <(grep -v '^\s*#' "$ENV_FILE" | grep -E '^[A-Z0-9_]+=.+')
+while IFS='=' read -r key value; do
+  [[ -z "$key" || "$key" =~ ^# || ! "$key" =~ ^[A-Z0-9_]+$ ]] && continue
+
+  # Handle multiline quoted values
+  if [[ "$value" =~ ^\" ]]; then
+    value="${value#\"}"  # remove opening quote
+    while ! [[ "$value" =~ \"$ ]]; do
+      read -r next_line || break
+      value+=$'\n'"$next_line"
+    done
+    value="${value%\"}"  # remove closing quote
+  fi
+
+  log "Adding $key"
+  gh secret set "$key" --repo "$REPO" --body "$value"
+done < "$ENV_FILE"
+
 }
 
 function list_secrets() {
