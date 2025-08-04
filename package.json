@@ -10,7 +10,7 @@
     "app"
   ],
   "scripts": {
-    "dev": "docker compose -f compose.dev.yml up -d --build",
+    "dev": "docker compose -f compose.dev.yml --env-file .env up -d",
     "build": "bun run --filter @streama/api build && bun run --filter @streama/app build",
     "start": "docker compose up -d",
     "stop": "docker compose down --remove-orphans",

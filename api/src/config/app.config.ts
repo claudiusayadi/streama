@@ -1,8 +1,8 @@
-import * as dotenv from 'dotenv';
-import * as dotenvExpand from 'dotenv-expand';
 import { z } from 'zod';
 
-dotenvExpand.expand(dotenv.config());
+// if (process.env.NODE_ENV !== 'production') {
+//   dotenvExpand.expand(dotenv.config());
+// }
 
 export const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'production', 'test', 'staging']),
