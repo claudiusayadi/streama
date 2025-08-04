@@ -1,31 +1,46 @@
-# Base image
-FROM oven/bun:1-alpine AS base
+FROM oven/bun:alpine AS base
 
 WORKDIR /usr/src/app
 
-# Dependencies stage
-FROM base AS deps
+# Install dependencies into tmp directory
+# This will cache them and speed up future builds
+FROM base AS install
+RUN mkdir -p /tmp/dev
+COPY package.json bun.lock* /tmp/dev/
+RUN cd /tmp/dev && bun install --frozen-lockfile
 
-COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile --production
+# Install with --production (exclude devDependencies)
+RUN mkdir -p /tmp/prod
+COPY package.json bun.lock* /tmp/prod/
+RUN cd /tmp/prod && bun install --frozen-lockfile --production
 
-# Build stage
-FROM base AS builder
-
-WORKDIR /usr/src/app
-COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile
-
-ENV NODE_ENV=production
+# Copy node_modules from tmp directory
+# Then copy all (non-ignored) project files into the image
+FROM base AS prerelease
+COPY --from=install /tmp/dev/node_modules node_modules
 COPY . ./
+
+# Build the Next.js application
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN bun run build
 
-# Final stage: serving the built app
-FROM oven/bun:1-alpine AS runner
+# Copy production dependencies and built app into final image
+FROM base AS release
+COPY --from=install /tmp/prod/node_modules node_modules
+COPY --from=prerelease /usr/src/app/.next/standalone ./
+COPY --from=prerelease /usr/src/app/.next/static ./.next/static
+COPY --from=prerelease /usr/src/app/public ./public
+COPY --from=prerelease /usr/src/app/package.json ./
 
-WORKDIR /usr/src/app
-COPY --from=builder /usr/src/app/dist ./dist
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 bun
+USER bun
 
+# Expose port
 EXPOSE ${APP_PORT}
 
-CMD [ "bun", "run", "dist/main.js" ]
+ENV PORT=${APP_PORT}
+
+CMD ["node", "server.js"]
