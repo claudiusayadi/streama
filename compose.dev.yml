@@ -2,9 +2,10 @@ name: streama
 services:
   streama-api:
     container_name: streama-api-dev
-    build:
-      context: ./api
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/claudiusayadi/streama-api:latest
+    # build:
+    #   context: ./api
+    #   dockerfile: Dockerfile.dev
     restart: unless-stopped
     ports:
       - '$API_PORT:$API_PORT'
@@ -33,9 +34,10 @@ services:
 
   streama-app:
     container_name: streama-app-dev
-    build:
-      context: ./app
-      dockerfile: Dockerfile.dev
+    image: ghcr.io/claudiusayadi/streama-app:latest
+    # build:
+    #   context: ./app
+    #   dockerfile: Dockerfile.dev
     restart: unless-stopped
     ports:
       - '$APP_PORT:$APP_PORT'

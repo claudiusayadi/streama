@@ -7,6 +7,8 @@ export default registerAs('db', () => {
     type: 'postgres',
     url: AppConfig.DB_URL,
     autoLoadEntities: true,
+    logging: false,
+    synchronize: false,
   } as const satisfies TypeOrmModuleOptions;
   return config;
 });

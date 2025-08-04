@@ -9,4 +9,6 @@ export default new DataSource({
     'dist/src/common/**/*.entity.js',
   ],
   migrations: ['dist/src/db/migrations/*.js'],
+  logging: false,
+  synchronize: false,
 });
