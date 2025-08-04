@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// DO NOT TOUCH
 // if (process.env.NODE_ENV !== 'production') {
 //   dotenvExpand.expand(dotenv.config());
 // }
@@ -30,9 +31,9 @@ export const envSchema = z.object({
   TMDB_API_URL: z.string().min(1, 'TMDB_API_URL is required!'),
   TMDB_IMAGE_URL: z.string().min(1, 'TMDB_IMAGE_URL is required!'),
 
+  TRAKT_API_URL: z.string().min(1, 'TRAKT_API_URL is required!'),
   TRAKT_CLIENT_ID: z.string().min(1, 'TRAKT_CLIENT_ID is required!'),
   TRAKT_CLIENT_SECRET: z.string().min(1, 'TRAKT_CLIENT_SECRET is required!'),
-  TRAKT_API_URL: z.string().min(1, 'TRAKT_API_URL is required!'),
 
   EMAIL_FROM: z.string().optional(),
   EMAIL_SENDER: z.string().optional(),
