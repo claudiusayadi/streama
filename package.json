@@ -10,13 +10,13 @@
     "app"
   ],
   "scripts": {
-    "dev": "docker compose -f compose.dev.yml --env-file .env up -d",
+    "dev": "docker compose -f compose.dev.yml up",
     "build": "bun run --filter @streama/api build && bun run --filter @streama/app build",
     "start": "docker compose up -d",
+    "pull": "docker compose pull",
     "stop": "docker compose down --remove-orphans",
     "logs:api": "docker compose logs -f streama-api",
     "logs:app": "docker compose logs -f streama-app",
-    "pull": "docker compose pull",
     "api:dev": "bun run --filter @streama/api start:dev --env-file=../.env",
     "api:build": "bun run --filter @streama/api build --env-file=../.env",
     "api:test": "bun run --filter @streama/api test --env-file=../.env",
