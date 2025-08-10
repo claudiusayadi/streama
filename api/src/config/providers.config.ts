@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { ExcludeNullInterceptor } from 'src/common/interceptors/excludeNull.interceptor';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { VALIDATION_PIPE_OPTIONS } from '../common/common.constant';
@@ -35,6 +36,10 @@ export const globalProviders: Provider[] = [
   {
     provide: APP_INTERCEPTOR,
     useClass: ClassSerializerInterceptor,
+  },
+  {
+    provide: APP_INTERCEPTOR,
+    useClass: ExcludeNullInterceptor,
   },
 ];
 
