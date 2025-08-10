@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { configProvider, globalProviders } from 'src/config/providers.config';
+import { configProvider } from 'src/config/providers.config';
 import jwtConfig from '../config/jwt.config';
 import throttlerConfig from '../config/throttler.config';
 import { User } from '../domains/users/entities/user.entity';
@@ -18,13 +18,7 @@ import { LocalStrategy } from './strategies/local.strategy';
     ThrottlerModule.forRootAsync(throttlerConfig.asProvider()),
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    ...configProvider,
-    ...globalProviders,
-  ],
+  providers: [AuthService, LocalStrategy, JwtStrategy, ...configProvider],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

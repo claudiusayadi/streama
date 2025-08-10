@@ -6,10 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ChangeEmailDto } from 'src/auth/dto/change-email.dto';
 import { ChangePasswordDto } from 'src/auth/dto/change-password';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
@@ -49,10 +50,23 @@ export class AuthController {
   @Post('signin')
   signin(
     @CurrentUser() user: RequestUser,
-    @Res({ passthrough: true }) res: Response,
+    @Req() req: Request,
+    // @Res({ passthrough: true }) res: Response,
   ) {
     const token = this.authService.signin(user);
-    res.cookie('token', token, cookieConfig);
+    req.res?.cookie('token', token, cookieConfig);
+    return { message: 'Signed in successfully' };
+  }
+
+  /**
+   * User logout
+   * @remarks Clears the JWT token cookie to sign out the user
+   */
+  @HttpCode(HttpStatus.OK)
+  @Post('signout')
+  signout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token', cookieConfig);
+    return { message: 'Signed out successfully' };
   }
 
   /**
