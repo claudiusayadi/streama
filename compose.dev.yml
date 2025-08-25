@@ -6,6 +6,9 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile.dev
+      args:
+        PUID: ${PUID:-1000}
+        PGID: ${PGID:-1000}
     user: '$PUID:$PGID'
     restart: unless-stopped
     ports:
@@ -25,7 +28,6 @@ services:
       EMAIL_USERNAME: $EMAIL_USERNAME
       HTTP_MAX_REDIRECTS: $HTTP_MAX_REDIRECTS
       HTTP_TIMEOUT: $HTTP_TIMEOUT
-      JWT_COOKIES_TTL: $JWT_COOKIES_TTL
       JWT_SECRET: $JWT_SECRET
       JWT_TTL: $JWT_TTL
       NODE_ENV: $NODE_ENV
@@ -48,7 +50,9 @@ services:
       - db
     volumes:
       - ./api:/usr/src/api
-      # - /usr/src/api/node_modules # prevents host node_modules from overwriting container's
+      - api_node_modules:/usr/src/api/node_modules
+    command: >
+      sh -c "cd /usr/src/api && if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then bun install; fi && bun run start:dev"
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:$API_PORT/health']
       interval: 60s
@@ -61,6 +65,9 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile.dev
+      args:
+        PUID: ${PUID:-1000}
+        PGID: ${PGID:-1000}
     user: '$PUID:$PGID'
     restart: unless-stopped
     ports:
@@ -74,8 +81,10 @@ services:
       - streama-api
     volumes:
       - ./app:/usr/src/app
-      # - /usr/src/app/node_modules # prevents host node_modules from overwriting container's
-      - /usr/src/app/.next # preserve Next.js cache
+      - app_node_modules:/usr/src/app/node_modules
+      - app_next_cache:/usr/src/app/.next # preserve Next.js cache
+    command: >
+      sh -c "cd /usr/src/app && if [ ! -d node_modules ] || [ -z \"$(ls -A node_modules 2>/dev/null)\" ]; then bun install; fi && bun run dev"
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:$APP_PORT']
       interval: 60s
@@ -85,3 +94,8 @@ services:
 networks:
   db:
     external: true
+
+volumes:
+  api_node_modules:
+  app_node_modules:
+  app_next_cache:

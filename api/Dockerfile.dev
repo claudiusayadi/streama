@@ -3,11 +3,11 @@ FROM oven/bun:alpine AS base
 WORKDIR /usr/src/api
 
 COPY package.json bun.lock ./
-RUN bun install --frozen-lockfile
+RUN bun install
 
 ENV NODE_ENV=development
 COPY . ./
 
 EXPOSE ${API_PORT}
 
-CMD [ "bun", "run", "start:dev" ]
+# CMD [ "bun", "run", "start:dev" ]

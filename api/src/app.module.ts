@@ -6,12 +6,12 @@ import { globalProviders } from './config/providers.config';
 import throttlerConfig from './config/throttler.config';
 import { DbModule } from './db/db.module';
 import { AnalyticsModule } from './domains/analytics/analytics.module';
+import { HealthModule } from './domains/health/health.module';
 import { MoviesModule } from './domains/movies/movies.module';
 import { TmdbModule } from './domains/tmdb/tmdb.module';
 import { TraktModule } from './domains/trakt/trakt.module';
 import { TvModule } from './domains/tv/tv.module';
 import { UsersModule } from './domains/users/users.module';
-import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [

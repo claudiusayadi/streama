@@ -4,5 +4,5 @@ export default {
   secure: true,
   httpOnly: true,
   sameSite: true,
-  maxAge: AppConfig.JWT_TTL,
+  maxAge: AppConfig.JWT_TTL * 1000, // in milliseconds
 };

@@ -8,7 +8,7 @@ export default registerAs('db', () => {
     url: AppConfig.DB_URL,
     autoLoadEntities: true,
     logging: false,
-    synchronize: false,
+    synchronize: AppConfig.NODE_ENV !== 'production',
   } as const satisfies TypeOrmModuleOptions;
   return config;
 });
