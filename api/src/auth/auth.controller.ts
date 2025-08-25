@@ -11,11 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { ChangeEmailDto } from 'src/auth/dto/change-email.dto';
 import { ChangePasswordDto } from 'src/auth/dto/change-password';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enums/user-role.enum';
 import { RequestUser } from 'src/common/interfaces/user.interface';

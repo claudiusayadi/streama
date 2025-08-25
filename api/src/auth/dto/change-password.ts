@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class ChangePasswordDto {
   /**
    * Current password of the user
-   * @example 'currentPassword123'
+   * @example 'currentPassword.123'
    */
   @IsString()
   @IsNotEmpty()
@@ -11,7 +11,7 @@ export class ChangePasswordDto {
 
   /**
    * New password for the user
-   * @example 'newPassword456'
+   * @example 'newPassword.456'
    */
   @IsString()
   @IsNotEmpty()

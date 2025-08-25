@@ -1,6 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { Response } from 'express';
 import { EntityNotFoundError } from 'typeorm';
+
 import { HttpError } from '../utils/http-error.util';
 import { extractFromText } from '../utils/regex.util';
 

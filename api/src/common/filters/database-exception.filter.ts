@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch } from '@nestjs/common';
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Response } from 'express';
 import { QueryFailedError } from 'typeorm';
+
 import { DatabaseError } from '../interfaces/database-error.interface';
 import { HttpError } from '../utils/http-error.util';
 import { extractFromText } from '../utils/regex.util';
@@ -40,8 +41,8 @@ export class DatabaseExceptionFilter extends BaseExceptionFilter {
   private readonly FIELD_VALUE_REGEX = /(?<=\)=\().*?(?=\))/;
 
   private createErrorData(code: string, message: string) {
-    let httpError: HttpError;
-    let description: string;
+    let httpError: HttpError | undefined = undefined;
+    let description: string | undefined = undefined;
 
     switch (code) {
       case this.DatabaseErrorCode.ASSOCIATION_NOT_FOUND_OR_NOT_NULL_VIOLATION:

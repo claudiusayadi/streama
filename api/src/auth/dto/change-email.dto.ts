@@ -3,7 +3,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class ChangeEmailDto {
   /**
    * Current email of the user
-   * @example 'carelesspender@gmail.com'
+   * @example 'ilovemovies@gmail.com'
    */
   @IsString()
   @IsNotEmpty()
@@ -11,7 +11,7 @@ export class ChangeEmailDto {
 
   /**
    * New email for the user
-   * @example 'newleafspender@gmail.com'
+   * @example 'ilovestreama@gmail.com'
    * */
   @IsString()
   @IsNotEmpty()
